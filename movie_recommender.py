@@ -8,14 +8,14 @@ def load():
     movies = pd.read_csv('movies.csv')
     ratings = pd.read_csv('ratings.csv')
 
-    movies['genres'] = movies['genres'].apply(lambda x: x.splt('|'))
+    movies['genres'] = movies['genres'].apply(lambda x: x.split('|'))
     movies['genres_str'] = movies['genres'].apply(lambda x: ' '.join(x))
     return movies, ratings
 
 movies, ratings = load()
 
 @st.cache
-def build_sim_matrix():
+def build_sim_matrix(movies):
     vect = CountVectorizer()
     genre_matrix = vect.fit_transform(movies['genres_str'])
     cosine_sim = cosine_similarity(genre_matrix)
@@ -34,11 +34,11 @@ def movie_recommendation(movie_title, movies, cosine_sim, top_n=0):
         return("Movie not found. Please try another movie title")
 
 st.title("Movie Recommendation System")
-st.wrtie("Get movie recommendaitons based on your preferences!")
+st.write("Get movie recommendaitons based on your preferences!")
 
 selected_movie = st.text_input("Enter a movie you like: ")
 
-if st.buton("Get Recommendations"):
+if st.button("Get Recommendations"):
     if selected_movie:
         recommendations = movie_recommendation(selected_movie, movies, cosine_sim)
         st.write(f"Recommendations for '{selected_movie}'  ")
@@ -49,4 +49,3 @@ if st.buton("Get Recommendations"):
 
 if st.checkbox("Show Movies Dataset"):
     st.write(movies.head())
-    
